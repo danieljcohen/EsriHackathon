@@ -28,203 +28,144 @@
     </style>
 
     <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+    <script>
+      var dojoConfig = {
+        packages: [
+          {
+            name: 'geolocate',
+            location: 'https://2gis.github.io/mock-geolocation/dist',
+            main: 'geolocate',
+          },
+        ],
+      };
+    </script>
     <script src="https://js.arcgis.com/4.30/"></script>
     <script>
-      require(['esri/Map', 'esri/views/MapView', 'esri/layers/StreamLayer', 'esri/layers/VideoLayer', 'esri/widgets/VideoPlayer'], (
-        Map,
-        MapView,
-        StreamLayer,
-        VideoLayer,
-        VideoPlayer,
-      ) =>
-        (async () => {
-          // Create a client-side stream layer by setting its
-          // required properties and additional desired properties
-          const layer = new StreamLayer({
-            // field schemas in the fields array should match the
-            // feature attributes that will stream to the layer.
-            // set the objectIdField and trackIdField in the fields
-            fields: [
+      var dojoConfig = {
+        packages: [
+          {
+            name: 'geolocate',
+            location: 'https://2gis.github.io/mock-geolocation/dist',
+            main: 'geolocate',
+          },
+        ],
+      };
+    </script>
+
+    <script src="https://js.arcgis.com/4.30/"></script>
+
+    <script>
+      require([
+        'geolocate', // geolocation simulator (https://github.com/2gis/mock-geolocation)
+        'esri/widgets/Track',
+        'esri/views/SceneView',
+        'esri/Map',
+        'esri/Graphic',
+      ], (geolocate, Track, SceneView, Map, Graphic) => {
+        // geolocation simulator
+        stubGeolocation();
+
+        const map = new Map({
+          basemap: 'topo-vector',
+        });
+
+        const view = new SceneView({
+          map: map,
+          container: 'viewDiv',
+          center: [-117.19678, 34.05775],
+          zoom: 18,
+          ui: {
+            components: ['attribution'], // replace default set of UI components
+          },
+        });
+
+        const track = new Track({
+          view: view,
+          goToLocationEnabled: false, // disable this since we want to control what happens after our location is acquired
+          graphic: new Graphic({
+            symbol: {
+              // autocasts as new SimpleMarkerSymbol()
+              type: 'simple-marker',
+              size: '12px',
+              color: 'orange',
+              // autocasts as new SimpleLineSymbol()
+              outline: {
+                color: '#efefef',
+                width: '1.5px',
+              },
+            },
+          }),
+        });
+        view.ui.add(track, 'top-left');
+
+        view.when(() => {
+          let prevLocation = view.center;
+
+          track.on('track', () => {
+            const location = track.graphic.geometry;
+
+            // view
+            //   .goTo({
+            //     center: location,
+            //     tilt: 50,
+            //     scale: 2500,
+            //     heading: 360 - getHeading(location, prevLocation), // only applies to SceneView
+            //     rotation: 360 - getHeading(location, prevLocation), // only applies to MapView
+            //   })
+            //   .catch(error => {
+            //     if (error.name != 'AbortError') {
+            //       console.error(error);
+            //     }
+            //   });
+
+            prevLocation = location.clone();
+          });
+
+          track.start();
+        });
+
+        function getHeading(point, oldPoint) {
+          // get angle between two points
+          const angleInDegrees = (Math.atan2(point.y - oldPoint.y, point.x - oldPoint.x) * 180) / Math.PI;
+
+          // move heading north
+          return -90 + angleInDegrees;
+        }
+
+        // geolocation simulator
+        function stubGeolocation() {
+          let coords = [
               {
-                name: 'OBJECTID',
-                alias: 'OBJECTID',
-                type: 'oid',
+                lat: 34.05775,
+                lng: -117.19678,
               },
               {
-                name: 'TRACKID',
-                alias: 'TrackId',
-                type: 'long',
+                lat: 34.05778,
+                lng: -117.19615,
               },
               {
-                name: 'STATUS',
-                alias: 'STATUS',
-                type: 'string',
+                lat: 34.05743,
+                lng: -117.19613,
+              },
+              {
+                lat: 34.05741,
+                lng: -117.19682,
               },
             ],
-            // trackIdField is required and the field schema must exist
-            // in the fields array
-            timeInfo: {
-              trackIdField: 'TRACKID',
-            },
-            updateInterval: 100,
-            geometryType: 'polygon', // required property
-            spatialReference: {
-              wkid: 102100,
-            },
-            popupTemplate: {
-              title: 'Status: {STATUS}',
-              content: 'trackId: {TRACKID}, objectId: {OBJECTID}',
-            },
-            labelingInfo: [
-              {
-                symbol: {
-                  type: 'text',
-                  color: 'black',
-                },
-                labelPlacement: 'always-horizontal',
-                labelExpressionInfo: {
-                  expression: '$feature.STATUS',
-                },
-              },
-            ],
-            // set unique value renderer based on the status field
-            renderer: {
-              type: 'unique-value',
-              field: 'STATUS',
-              uniqueValueInfos: [
-                {
-                  value: 'blocked',
-                  symbol: {
-                    type: 'simple-fill',
-                    color: [233, 116, 81, 0.5],
-                    outline: {
-                      width: 1,
-                      color: 'white',
-                    },
-                  },
-                },
-                {
-                  value: 'open',
-                  symbol: {
-                    type: 'simple-fill',
-                    color: [34, 139, 34, 0.5],
-                    outline: {
-                      width: 1,
-                      color: 'white',
-                    },
-                  },
-                },
-                {
-                  value: 'unknown',
-                  symbol: {
-                    type: 'simple-fill',
-                    color: [255, 191, 0, 0.5],
-                    outline: {
-                      width: 1,
-                      color: 'white',
-                    },
-                  },
-                },
-              ],
-            },
-          });
+            currentCoordIndex = 0;
 
-          const videoLayer = new VideoLayer();
+          geolocate.use();
 
-          const map = new Map({
-            basemap: 'gray-vector',
-            layers: [layer, videoLayer],
-          });
-
-          const view = new MapView({
-            container: 'viewDiv',
-            map,
-            zoom: 15,
-            center: [-118.4, 34.0573],
-          });
-
-          view.when().then(() => {
-            const status = ['blocked', 'unknown', 'open'];
-
-            let objectIdCounter = 0;
-            // call sendMessageToClient method every 1 second
-            // to stream new features with different attributes
-            setInterval(() => {
-              // start streaming features to the stream layer
-              // update the status attribute values
-              // you must stream new features with different attributes
-              layer.sendMessageToClient({
-                type: 'features',
-                features: [
-                  {
-                    attributes: {
-                      TRACKID: 1,
-                      OBJECTID: objectIdCounter++,
-                      STATUS: status[Math.floor(Math.random() * status.length)],
-                    },
-                    geometry: {
-                      rings: [
-                        [
-                          [-13180792.01151011, 4037145.9303959487],
-                          [-13180509.058277348, 4037145.9303959487],
-                          [-13180509.058277348, 4036824.2921144445],
-                          [-13180792.01151011, 4036824.2921144445],
-                          [-13180792.01151011, 4037145.9303959487],
-                        ],
-                      ],
-                    },
-                  },
-                  {
-                    attributes: {
-                      TRACKID: 2,
-                      OBJECTID: objectIdCounter++,
-                      STATUS: status[Math.floor(Math.random() * status.length)],
-                    },
-                    geometry: {
-                      rings: [
-                        [
-                          [-13180458.980453761, 4036356.2739379476],
-                          [-13180207.564959718, 4036356.2739379476],
-                          [-13180207.564959718, 4036190.056991914],
-                          [-13180458.980453761, 4036190.056991914],
-                          [-13180458.980453761, 4036356.2739379476],
-                        ],
-                      ],
-                    },
-                  },
-                  {
-                    attributes: {
-                      TRACKID: 3,
-                      OBJECTID: objectIdCounter++,
-                      STATUS: status[Math.floor(Math.random() * status.length)],
-                    },
-                    geometry: {
-                      rings: [
-                        [
-                          [-13179890.918598393, 4036915.303683526],
-                          [-13179661.411569001, 4036915.303683526],
-                          [-13179661.411569001, 4036673.041598266],
-                          [-13179890.918598393, 4036673.041598266],
-                          [-13179890.918598393, 4036915.303683526],
-                        ],
-                      ],
-                    },
-                  },
-                ],
-              });
-            }, 1000);
-          });
-        })());
-
-      const videoPlayer = new VideoPlayer({
-        layer: videoLayer,
-        view,
+          setInterval(() => {
+            geolocate.change(coords[currentCoordIndex]);
+            currentCoordIndex = (currentCoordIndex + 1) % coords.length;
+          }, 1500);
+        }
       });
-      view.ui.add(videoPlayer, 'bottom-left');
     </script>
   </head>
   <body>
     <div id="viewDiv"></div>
-    <arcgis-asset-tracker></arcgis-asset-tracker>
+    <!-- <arcgis-asset-tracker></arcgis-asset-tracker> -->
   </body>
 </html>

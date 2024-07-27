@@ -40,7 +40,17 @@ export class ArcgisAssetTrackerPanel {
   // --------------------------------------------------------------------------
 
   render(): VNode {
-    return <div class="video-player"></div>;
+    return (
+      <video controls width="250">
+        <source src="/media/daniel.webm" type="video/webm" />
+        <source src="/media/daniel.mp4" type="video/mp4" />
+        Download the
+        <a href="/media/daniel.webm">WEBM</a>
+        or
+        <a href="/media/daniel.mp4">MP4</a>
+        video.
+      </video>
+    );
   }
 
   // --------------------------------------------------------------------------
