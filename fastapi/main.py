@@ -5,7 +5,6 @@ import json
 from imageai.Detection import VideoObjectDetection
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from util import get_center_of_box, is_within_distance, checkIfLeftFrame
 from video_object_tracker import VideoObjectTracker
 
 app = FastAPI()
@@ -42,7 +41,7 @@ if __name__ == "__main__":
     import uvicorn
     from threading import Thread
 
-    video_file_path = r"esrihackathon\src\components\arcgis-asset-tracker\media\MicrosoftTeams-video (1).mp4"
+    video_file_path = r"../media/two_ppl.mp4"
     model_path = "tiny-yolov3.pt"
 
     tracker = VideoObjectTracker(video_file_path, model_path)
