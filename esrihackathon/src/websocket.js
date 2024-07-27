@@ -17,3 +17,5 @@ function initWebSocket(url) {
     console.log('WebSocket error:', error);
   };
 }
+
+//     initWebSocket('ws://localhost:8000/ws');
