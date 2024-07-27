@@ -1,10 +1,15 @@
+import json
+import logging
 import asyncio
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from video_object_tracker import VideoObjectTracker
 from fastapi.websockets import WebSocketDisconnect
 
+# from video_object_tracker import VideoObjectTracker
+
+
 app = FastAPI()
+logging.basicConfig(level=logging.INFO)
 
 # Allow CORS for all origins
 app.add_middleware(
@@ -30,6 +35,14 @@ async def websocket_endpoint(websocket: WebSocket):
     client = websocket
     try:
         while True:
+            data = {
+                "human_1": "left",
+                "human_2": "right",
+                "inventory_1": "right",
+                "inventory_2": "left",
+            }
+            await websocket.send_text(json.dumps(data))
+            logging.info(f"Sent data: {data}")
             await asyncio.sleep(1)
     except WebSocketDisconnect:
         client = None
@@ -39,14 +52,14 @@ if __name__ == "__main__":
     import uvicorn
     from threading import Thread
 
-    video_file_path = r"../media/two_ppl.mp4"
-    model_path = "tiny-yolov3.pt"
+    # video_file_path = r"../media/two_ppl.mp4"
+    # model_path = "tiny-yolov3.pt"
 
-    tracker = VideoObjectTracker(video_file_path, model_path, client)
+    # tracker = VideoObjectTracker(video_file_path, model_path, client)
 
     # Run FastAPI server in a separate thread
     server_thread = Thread(target=lambda: uvicorn.run(app, host="0.0.0.0", port=8000))
     server_thread.start()
 
-    # Start tracking
-    tracker.start_tracking()
+    # # Start tracking
+    # tracker.start_tracking()

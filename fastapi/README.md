@@ -1,4 +1,5 @@
 ```sh
+conda create -n {your_env_name}
 pip install --no-cache-dir -r requirements.txt
-uvicorn main:app --reload
+python main.py
 ```
