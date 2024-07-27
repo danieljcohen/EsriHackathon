@@ -22,9 +22,9 @@ app.add_middleware(
 clients = []
 
 
-@app.get("/")
+@app.get("/healthz")
 async def get():
-    return {"message": "Hello, world!"}
+    return {"Server": "Live"}
 
 
 @app.websocket("/ws")
