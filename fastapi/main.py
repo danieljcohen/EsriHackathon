@@ -1,11 +1,8 @@
-import cv2
 import asyncio
-import websockets
-import json
-from imageai.Detection import VideoObjectDetection
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from video_object_tracker import VideoObjectTracker
+from fastapi.websockets import WebSocketDisconnect
 
 app = FastAPI()
 
@@ -18,23 +15,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-clients = []
+client = None
 
 
 @app.get("/healthz")
-async def get():
+async def health_check():
     return {"Server": "Live"}
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    global client
     await websocket.accept()
-    clients.append(websocket)
+    client = websocket
     try:
         while True:
             await asyncio.sleep(1)
     except WebSocketDisconnect:
-        clients.remove(websocket)
+        client = None
 
 
 if __name__ == "__main__":
@@ -44,7 +42,7 @@ if __name__ == "__main__":
     video_file_path = r"../media/two_ppl.mp4"
     model_path = "tiny-yolov3.pt"
 
-    tracker = VideoObjectTracker(video_file_path, model_path)
+    tracker = VideoObjectTracker(video_file_path, model_path, client)
 
     # Run FastAPI server in a separate thread
     server_thread = Thread(target=lambda: uvicorn.run(app, host="0.0.0.0", port=8000))

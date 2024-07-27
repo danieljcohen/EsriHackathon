@@ -1,20 +1,19 @@
 import cv2
-from imageai.Detection import VideoObjectDetection
 import asyncio
-import websockets
 import json
+from imageai.Detection import VideoObjectDetection
 from util import get_center_of_box, is_within_distance, checkIfLeftFrame
 
 
 class VideoObjectTracker:
-    def __init__(self, video_file_path, model_path, websocket_url):
+    def __init__(self, video_file_path, model_path, client):
         self.video_file_path = video_file_path
-        self.websocket_url = websocket_url
         self.stream = cv2.VideoCapture(video_file_path)
         self.currObjects = []
         self.object_paths = {}  # dict to store paths of tracked objects
         self.object_disappear_frame_count = {}  # tracks when an object disappears
         self.next_object_id = 0  # unique ID counter
+        self.client = client  # WebSocket client
 
         # Initialize VideoObjectDetection object with Tiny YOLOV3 model
         self.vid_obj_detect = VideoObjectDetection()
@@ -23,9 +22,8 @@ class VideoObjectTracker:
         self.vid_obj_detect.loadModel()
 
     async def send_message_to_websocket(self, message):
-        print("Sending message to WebSocket")
-        async with websockets.connect(self.websocket_url) as websocket:
-            await websocket.send(json.dumps(message))
+        if self.client:
+            await self.client.send_text(json.dumps(message))
 
     def for_frame(self, frame_number, output_array, output_count, returned_frame):
         frame_height, frame_width, _ = returned_frame.shape
@@ -92,7 +90,7 @@ class VideoObjectTracker:
                 if not dir:
                     print("did not leave")
                 else:
-                    print("!!!", dir)
+                    print(dir)
                     # Call WebSocket function to send message
                     message = {
                         "object_id": obj_id,
