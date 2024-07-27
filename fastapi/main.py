@@ -4,8 +4,7 @@ import asyncio
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.websockets import WebSocketDisconnect
-
-# from video_object_tracker import VideoObjectTracker
+from video_object_tracker import VideoObjectTracker
 
 
 app = FastAPI()
@@ -52,19 +51,14 @@ if __name__ == "__main__":
     # import uvicorn
     # from threading import Thread
 
-<<<<<<< HEAD
     video_file_path = r"esrihackathon\src\components\arcgis-asset-tracker\media\MicrosoftTeams-video (9).mp4"
     model_path = "tiny-yolov3.pt"
-=======
-    # video_file_path = r"../media/two_ppl.mp4"
-    # model_path = "tiny-yolov3.pt"
->>>>>>> refs/remotes/origin/main
 
-    # tracker = VideoObjectTracker(video_file_path, model_path, client)
+    tracker = VideoObjectTracker(video_file_path, model_path, client)
 
     # Run FastAPI server in a separate thread
     # server_thread = Thread(target=lambda: uvicorn.run(app, host="0.0.0.0", port=8000))
     # server_thread.start()
 
     # # Start tracking
-    # tracker.start_tracking()
+    tracker.start_tracking()
