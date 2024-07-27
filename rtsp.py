@@ -2,7 +2,7 @@ import cv2
 from imageai.Detection import VideoObjectDetection
 from util import get_center_of_box, is_within_distance, checkIfLeftFrame
 
-video_file_path = r"esrihackathon\src\components\arcgis-asset-tracker\media\MicrosoftTeams-video (1).mp4"
+video_file_path = r"esrihackathon\src\components\arcgis-asset-tracker\media\vid2.mp4"
 
 # Open the video with OpenCV
 stream = cv2.VideoCapture(video_file_path)

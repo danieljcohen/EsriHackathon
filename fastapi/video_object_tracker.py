@@ -4,7 +4,6 @@ import json
 from imageai.Detection import VideoObjectDetection
 from util import get_center_of_box, is_within_distance, checkIfLeftFrame
 
-
 class VideoObjectTracker:
     def __init__(self, video_file_path, model_path, client):
         self.video_file_path = video_file_path
@@ -33,15 +32,19 @@ class VideoObjectTracker:
             objectName = itemDict["name"]
             boxPoints = itemDict["box_points"]
 
+            # Only process if the object is a person
+            if objectName.lower() != "person":
+                continue
+
             coords = get_center_of_box(boxPoints)
             matched = False
 
             for obj_id, obj_name, obj_coords, obj_frame in self.currObjects:
-                if frame_number - obj_frame > 60:
+                if frame_number - obj_frame > 50:
                     continue  # Skip old objects
 
                 if objectName == obj_name and is_within_distance(
-                    coords, obj_coords, threshold=60
+                    coords, obj_coords, threshold=40
                 ):
                     new_objects.append((obj_id, objectName, coords, frame_number))
                     matched = True
@@ -62,28 +65,34 @@ class VideoObjectTracker:
                 # Initialize disappear frame count
                 self.object_disappear_frame_count[obj_id] = frame_number
 
-            # Draw the bounding box and label
-            x1, y1, x2, y2 = boxPoints
-            cv2.rectangle(returned_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(
-                returned_frame,
-                f"{objectName} {obj_id}",
-                (x1, y1 - 10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.9,
-                (0, 255, 0),
-                2,
-            )
+            # Check if the center of two bounding boxes are within 20 pixels
+            close_objects = [
+                obj for obj in new_objects if is_within_distance(coords, obj[2], threshold=20)
+            ]
+
+            if len(close_objects) == 1:
+                # Draw the bounding box and label
+                x1, y1, x2, y2 = boxPoints
+                cv2.rectangle(returned_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                cv2.putText(
+                    returned_frame,
+                    f"{objectName} {obj_id}",
+                    (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    (0, 255, 0),
+                    2,
+                )
 
         # Remove objects that have disappeared for more than 10 frames
         self.currObjects = [
             obj
             for obj in new_objects
-            if frame_number - self.object_disappear_frame_count[obj[0]] <= 10
+            if frame_number - self.object_disappear_frame_count[obj[0]] <= 50
         ]
         newObjectPaths = {}
         for obj_id, path in self.object_paths.items():
-            if frame_number - self.object_disappear_frame_count[obj_id] <= 10:
+            if frame_number - self.object_disappear_frame_count[obj_id] <= 50:
                 newObjectPaths[obj_id] = path
             else:
                 dir = checkIfLeftFrame(frame_width, frame_height, path[-1])
@@ -123,7 +132,7 @@ class VideoObjectTracker:
         self.vid_obj_detect.detectObjectsFromVideo(
             input_file_path=self.video_file_path,
             output_file_path="output_video",
-            frames_per_second=60,
+            frames_per_second=30,
             log_progress=True,
             minimum_percentage_probability=30,
             per_frame_function=self.for_frame,
