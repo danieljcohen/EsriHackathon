@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # import uvicorn
     # from threading import Thread
 
-    video_file_path = r"esrihackathon\src\components\arcgis-asset-tracker\media\MicrosoftTeams-video (11).mp4"
+    video_file_path = r"esrihackathon\src\components\arcgis-asset-tracker\media\MicrosoftTeams-video (9).mp4"
     model_path = "tiny-yolov3.pt"
 
     tracker = VideoObjectTracker(video_file_path, model_path, client)
