@@ -52,7 +52,8 @@ ArcGIS Care leverages real-time detection and tracking of critical medical equip
 
 1. Clone the repository
 
-2. ```sh
+2. Install neccessary packages
+```sh
 pip install -r requirements.txt
 ```
 
