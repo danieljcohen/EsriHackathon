@@ -39,6 +39,19 @@
           map: map,
           center: [-117.195743, 34.057025],
           zoom: 18,
+          popup: new Popup({
+            dockEnabled: true,
+            dockOptions: {
+              // Disables the dock button from the popup
+              buttonEnabled: false,
+              // Ignore the default sizes that trigger responsive docking
+              breakpoint: false,
+            },
+            visibleElements: {
+              closeButton: false,
+            },
+          }),
+          container: 'viewDiv',
         });
 
         // Add a vector tile layer to the map
