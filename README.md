@@ -2,57 +2,94 @@
 
 Real-time inventory tracking tool enhancing efficiency and reducing operational challenges in hospitals.
 
+![webapp](/media/webapp.png)
+
+## Table of Contents
+
+- [ArcGIS Care](#arcgis-care)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Features](#features)
+  - [Architecture](#architecture)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
+  - [Installation](#installation)
+    - [Frontend Setup](#frontend-setup)
+    - [Backend Setup](#backend-setup)
+  - [Future Enhancements](#future-enhancements)
+  - [Contributors](#contributors)
+  - [References](#references)
+
 ## Overview
 
 ArcGIS Care leverages real-time detection and tracking of critical medical equipment, providing hospitals with the tools to monitor and manage resources efficiently. This project integrates machine learning, GIS, and WebSocket technology to ensure the availability of vital equipment, improving operational efficiency and patient outcomes.
 
+- [DevPost]()
+- [YouTube Demo Video]()
+
 ## Features
 
 - **Real-time Tracking:** Detect and track critical medical equipment in real-time.
-- **WebSocket Integration:** Live updates on equipment locations.
-- **Geospatial Analysis:** Utilize ArcGIS for spatial analysis and visualization.
 - **Machine Learning:** Implement YOLOv3 Tiny for accurate object detection.
+- **Seamless Integration:** Combines ArcGIS Maps SDK for spatial analysis and FastAPI for backend communication.
 
 ## Architecture
 
-- **Frontend:** ArcGIS Maps SDK for JavaScript, Vector Tile Feature Service
-- **Backend:** FastAPI, WebSocket for real-time communication
+### Frontend
+
+- **Technology:** ArcGIS Maps SDK for JavaScript, Vector Tile Feature Service
+- **Functionality:** Displays real-time locations of tracked medical equipment on a map.
+
+### Backend
+
+- **Technology:** FastAPI, WebSocket for real-time communication
 - **Machine Learning:** YOLOv3 Tiny API for object detection
 - **Programming Languages:** Python (backend and ML), JavaScript (frontend)
 
 ## Installation
 
-### Backend
+### Frontend Setup
 
-- [Backend Setup](./backend/README.md)
+1. Clone the repository.
+2. Navigate to the `frontend` directory.
+3. Install dependencies and start the development server:
 
-### Frontend
+```sh
+npm install
+npm start
+```
 
-- [Frontend Setup](./frontend/readme.md)
+### Backend Setup
 
-## WebSocket Integration
+1. Clone the repository.
+2. Navigate to the `backend` directory.
+3. Set up a new conda environment and install dependencies:
 
-The WebSocket server runs on `ws://localhost:8000/ws`. Connect to this endpoint to receive real-time updates of asset locations.
+```sh
+conda create -n arcgis-care-env python=3.8
+conda activate arcgis-care-env
+pip install --no-cache-dir -r requirements.txt
+```
 
-## Usage
+4. Start the FastAPI server:
 
-1. **Run object detection and tracking:**
-
-   The `VideoObjectTracker` class is designed to process video streams, detect objects, and send updates via WebSocket.
-
-2. **Track assets in real-time:**
-
-   The `VideoObjectTracker` processes video frames, detects objects, and sends updates to the WebSocket client.
+```sh
+python main.py
+```
 
 ## Future Enhancements
 
-- Enhance model accuracy for better tracking across multiple frames.
-- Improve integration with ArcGIS for more advanced spatial analysis.
-- Develop more robust WebSocket handling for uninterrupted real-time updates.
+- **Model Accuracy:** Enhance the model for better tracking across multiple frames.
+- **Advanced Spatial Analysis:** Improve integration with ArcGIS for more robust spatial analysis.
+- **WebSocket Handling:** Develop more robust WebSocket handling for uninterrupted real-time updates.
 
 ## Contributors
 
 - [danieljcohen](https://github.com/danieljcohen)
 - [100sun](https://github.com/100sun)
+- [Major-League-Gaming](https://github.com/Major-League-Gaming)
 
 ## References
+
+- [ImageAI Documentation](https://imageai.readthedocs.io/en/latest/)
+- [ArcGIS JavaScript API](https://developers.arcgis.com/javascript/latest/)
