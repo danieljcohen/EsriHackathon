@@ -14,6 +14,7 @@ Real-time inventory tracking tool enhancing efficiency and reducing operational 
     - [Frontend](#frontend)
     - [Backend](#backend)
   - [Installation](#installation)
+    - [Suggested Functionality viewing](#suggested-functionality-viewing)
     - [Frontend Setup](#frontend-setup)
     - [Backend Setup](#backend-setup)
   - [Future Enhancements](#future-enhancements)
@@ -53,6 +54,7 @@ ArcGIS Care leverages real-time detection and tracking of critical medical equip
 1. Clone the repository
 
 2. Install neccessary packages
+
 ```sh
 pip install -r requirements.txt
 ```
