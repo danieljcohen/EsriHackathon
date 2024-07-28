@@ -3,7 +3,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>VectorTileLayer | Sample | ArcGIS Maps SDK for JavaScript 4.30</title>
+    <title>ArcGIS Care</title>
+    <link rel="icon" href="./images/hospital.png" />
     <style>
       html,
       body,
@@ -31,7 +32,7 @@
       ) => {
         // Create a Map
         const map = new Map({ basemap: 'topo-vector' });
- 
+
         // Make map view and bind it to the map
         const view = new MapView({
           container: 'viewDiv',
@@ -47,12 +48,12 @@
               breakpoint: false,
             },
             visibleElements: {
-              closeButton: false,
+              closeButton: true,
             },
           }),
           container: 'viewDiv',
         });
- 
+
         /********************************************************************
          * Add a vector tile layer to the map
          *
@@ -70,7 +71,7 @@
           1: { longitude: -117.196357, latitude: 34.057036 },
           2: { longitude: -117.1963897, latitude: 34.0570364 },
         };
- 
+
         const markerSymbols = {
           0: {
             type: 'simple-marker',
@@ -89,7 +90,7 @@
             },
           },
         };
- 
+
         const pointGraphics = {
           0: new Graphic({
             geometry: { type: 'point', longitude: points[0].longitude, latitude: points[0].latitude },
@@ -104,35 +105,35 @@
             symbol: markerSymbols[1],
           }),
         };
- 
+
         view.graphics.addMany(Object.values(pointGraphics));
- 
+
         // WebSocket integration
         const ws = new WebSocket('ws://localhost:8000/ws');
- 
+
         ws.onopen = function (event) {
           console.log('WebSocket is open now.');
         };
- 
+
         ws.onmessage = function (event) {
           console.log('WebSocket Received:', event.data);
           const data = JSON.parse(event.data);
           updateLocation(data.object_id, data.direction);
         };
- 
+
         ws.onclose = function (event) {
           console.log('WebSocket is closed now.');
         };
- 
+
         ws.onerror = function (error) {
           console.log('WebSocket Error:', error);
         };
- 
+
         function updateLocation(object_id, direction) {
           let point = points[object_id];
- 
+
           console.log(`[${object_id}] latitude: ${point.latitude} longitude: ${point.longitude}`);
- 
+
           switch (direction) {
             case 'left':
               point.longitude -= 0.001; // Adjust the value as needed
@@ -147,18 +148,18 @@
               point.latitude -= 0.001; // Adjust the value as needed
               break;
           }
- 
+
           pointGraphics[object_id].geometry = {
             type: 'point',
             longitude: point.longitude,
             latitude: point.latitude,
             spatialReference: { wkid: 4326 },
           };
- 
+
           view.graphics.removeAll();
           view.graphics.addMany(Object.values(pointGraphics));
         }
- 
+
         view.popupEnabled = false;
         view.on('click', function (event, index) {
           // Check if a graphic was clicked
@@ -180,10 +181,7 @@
     <div id="viewDiv"></div>
   </body>
 </html>
- 
-<html lang="en">   <head>     <meta charset... by Major Yang
-Major Yang
-10:50 PM
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -217,7 +215,7 @@ Major Yang
       ) => {
         // Create a Map
         const map = new Map({ basemap: 'topo-vector' });
- 
+
         // Make map view and bind it to the map
         const view = new MapView({
           container: 'viewDiv',
@@ -233,12 +231,12 @@ Major Yang
               breakpoint: false,
             },
             visibleElements: {
-              closeButton: false,
+              closeButton: true,
             },
           }),
           container: 'viewDiv',
         });
- 
+
         /********************************************************************
          * Add a vector tile layer to the map
          *
@@ -252,11 +250,11 @@ Major Yang
         map.add(tileLayer);
         // Initial points location
         const points = {
-       0: { longitude: -117.196357, latitude: 34.057033 },
+          0: { longitude: -117.196357, latitude: 34.057033 },
           1: { longitude: -117.196357, latitude: 34.057033 },
           2: { longitude: -117.1963897, latitude: 34.057035 },
         };
- 
+
         const markerSymbols = {
           0: {
             type: 'simple-marker',
@@ -275,7 +273,7 @@ Major Yang
             },
           },
         };
- 
+
         const pointGraphics = {
           0: new Graphic({
             geometry: { type: 'point', longitude: points[0].longitude, latitude: points[0].latitude },
@@ -290,35 +288,35 @@ Major Yang
             symbol: markerSymbols[1],
           }),
         };
- 
+
         view.graphics.addMany(Object.values(pointGraphics));
- 
+
         // WebSocket integration
         const ws = new WebSocket('ws://localhost:8000/ws');
- 
+
         ws.onopen = function (event) {
           console.log('WebSocket is open now.');
         };
- 
+
         ws.onmessage = function (event) {
           console.log('WebSocket Received:', event.data);
           const data = JSON.parse(event.data);
           updateLocation(data.object_id, data.direction);
         };
- 
+
         ws.onclose = function (event) {
           console.log('WebSocket is closed now.');
         };
- 
+
         ws.onerror = function (error) {
           console.log('WebSocket Error:', error);
         };
- 
+
         function updateLocation(object_id, direction) {
           let point = points[object_id];
- 
+
           console.log(`[${object_id}] latitude: ${point.latitude} longitude: ${point.longitude}`);
- 
+
           switch (direction) {
             case 'left':
               point.longitude -= 0.00002; // Adjust the value as needed
@@ -333,18 +331,18 @@ Major Yang
               point.latitude -= 0.00004; // Adjust the value as needed
               break;
           }
- 
+
           pointGraphics[object_id].geometry = {
             type: 'point',
             longitude: point.longitude,
             latitude: point.latitude,
             spatialReference: { wkid: 4326 },
           };
- 
+
           view.graphics.removeAll();
           view.graphics.addMany(Object.values(pointGraphics));
         }
- 
+
         view.popupEnabled = false;
         view.on('click', function (event, index) {
           // Check if a graphic was clicked
@@ -353,7 +351,7 @@ Major Yang
             if (Math.abs(event.mapPoint.latitude - point.geometry.latitude) < 0.00001 && Math.abs(event.mapPoint.longitude - point.geometry.longitude) < 0.00001) {
               view.openPopup({
                 // Set the popup's title to the coordinates of the location
-                title: (index === 2 ? 'Camera' : 'Human Count = ' + (index+1)) ,
+                title: index === 2 ? 'Camera' : 'Human Count = ' + (index + 1),
                 content: '\n\n\n\n\n\n\n\n\n\n\n\n\n\n', // Set the location of the popup to the clicked location
               });
             }
