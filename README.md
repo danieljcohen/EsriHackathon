@@ -59,7 +59,7 @@ ArcGIS Care leverages real-time detection and tracking of critical medical equip
 pip install -r requirements.txt
 ```
 
-3. Run ai.py
+3. Run [ai.py](./backend/ai.py)
 
 ### Frontend Setup
 
