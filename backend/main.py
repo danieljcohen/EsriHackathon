@@ -196,6 +196,7 @@ def send_data(data):
     global client
     print("client: ", client)
     if client:
+        print("sending web socket...", json.dumps(data))
         asyncio.run(client.send_text(json.dumps(data)))
 
 
@@ -207,7 +208,6 @@ if __name__ == "__main__":
     model_path = "tiny-yolov3.pt"
 
     tracker = VideoObjectTracker(video_file_path, model_path, client)
-    # tracker = VideoObjectTracker(model_path, client)
 
     # Run FastAPI server in a separate thread
     server_thread = Thread(target=lambda: uvicorn.run(app, host="0.0.0.0", port=8000))
