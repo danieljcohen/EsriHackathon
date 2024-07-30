@@ -7,8 +7,6 @@
     <link rel="icon" href="https://raw.githubusercontent.com/danieljcohen/EsriHackathon/main/media/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.9.0/calcite.css" />
     <script type="module" src="https://js.arcgis.com/calcite-components/2.9.0/calcite.esm.js"></script>
-    <!-- <script type="module" src="/build/esrihackathon.esm.js"></script>
-    <script nomodule src="/build/esrihackathon.js"></script> -->
     <style>
       html,
       body,
@@ -30,10 +28,8 @@
         GraphicsLayer,
         Popup,
       ) => {
-        // Create a Map
         const map = new Map();
 
-        // Make map view and bind it to the map
         const view = new MapView({
           container: 'viewDiv',
           map: map,
@@ -42,19 +38,15 @@
           popup: new Popup({
             dockEnabled: true,
             dockOptions: {
-              // Disables the dock button from the popup
               buttonEnabled: false,
-              // Ignore the default sizes that trigger responsive docking
               breakpoint: false,
             },
             visibleElements: {
               closeButton: false,
             },
           }),
-          container: 'viewDiv',
         });
 
-        // Add a vector tile layer to the map
         const tileLayer = new VectorTileLayer({
           portalItem: {
             id: '529766b680754596854a381e772063ca',
@@ -62,11 +54,10 @@
         });
         map.add(tileLayer);
 
-        // Initial points location
         const points = {
-          0: { longitude: -117.196357, latitude: 34.057036 },
-          1: { longitude: -117.196357, latitude: 34.057036 },
-          2: { longitude: -117.1963897, latitude: 34.0570364 },
+          0: { longitude: -117.196357, latitude: 34.057035 },
+          1: { longitude: -117.196357, latitude: 34.057035 },
+          2: { longitude: -117.1963897, latitude: 34.057035 },
         };
 
         const markerSymbols = {
@@ -97,11 +88,10 @@
 
         view.graphics.addMany(Object.values(pointGraphics));
 
-        // WebSocket integration
         const ws = new WebSocket('ws://localhost:8000/ws');
         let messageCount = 0;
 
-        ws.onopen = function (event) {
+        ws.onopen = function () {
           console.log('WebSocket is open now.');
         };
 
@@ -117,7 +107,7 @@
           }
         };
 
-        ws.onclose = function (event) {
+        ws.onclose = function () {
           console.log('WebSocket is closed now.');
         };
 
@@ -132,21 +122,16 @@
 
           switch (direction) {
             case 'up':
-              console.log('Moving left', point);
-              point.longitude -= 0.0001; // Adjust the value as needed
-              console.log('Moved left', point);
+              point.longitude -= 0.0001;
               break;
             case 'down':
-              console.log('Moving right');
-              point.longitude += 0.00001; // Adjust the value as needed
+              point.longitude += 0.00001;
               break;
             case 'left':
-              console.log('Moving up');
-              point.latitude += 0.00003; // Adjust the value as needed
+              point.latitude += 0.00003;
               break;
             case 'right':
-              console.log('Moving down');
-              point.latitude -= 0.00003; // Adjust the value as needed
+              point.latitude -= 0.00004;
               break;
           }
 
@@ -166,22 +151,22 @@
         view.popupEnabled = false;
         const video = document.createElement('video');
         video.width = 300;
-        video.height = 300;
+        video.height = 200;
         video.controls = true;
-        video.autoplay = true;
+        // video.autoplay = true;
+        video.muted = true;
         const source = document.createElement('source');
-        source.src = './build/media/LiveAIDemo.mp4/';
+        // source.src = 'http://localhost:8000/video_stream';
+        source.src = './build/media/two_ppl_rendered.mp4';
         source.type = 'video/mp4';
         video.appendChild(source);
-        view.on('click', function (event, index) {
-          // Check if a graphic was clicked
+        view.on('click', function (event) {
           Object.values(pointGraphics).forEach((point, index) => {
             console.log(point);
             if (Math.abs(event.mapPoint.latitude - point.geometry.latitude) < 0.00001 && Math.abs(event.mapPoint.longitude - point.geometry.longitude) < 0.00001) {
               view.openPopup({
-                // Set the popup's title to the coordinates of the location
                 title: index === 2 ? 'Camera' : 'Human #' + (index + 1),
-                content: index === 2 ? video : null, // Set the location of the popup to the clicked location
+                content: index === 2 ? video : null,
               });
             }
           });

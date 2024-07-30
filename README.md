@@ -25,8 +25,8 @@ Real-time inventory tracking tool enhancing efficiency and reducing operational 
 
 ArcGIS Care leverages real-time detection and tracking of critical medical equipment, providing hospitals with the tools to monitor and manage resources efficiently. This project integrates machine learning, GIS, and WebSocket technology to ensure the availability of vital equipment, improving operational efficiency and patient outcomes.
 
-- [DevPost]()
-- [YouTube Demo Video]()
+- [DevPost](https://devpost.com/software/asset-tracker-system)
+- [YouTube Demo Video](https://youtu.be/k8CDjZ7z8Mw)
 
 ## Features
 
