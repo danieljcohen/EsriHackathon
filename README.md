@@ -2,7 +2,7 @@
 
 Real-time inventory tracking tool enhancing efficiency and reducing operational challenges in hospitals.
 
-![webapp](/media/webapp.png)
+![app_demo.gif](./media/app_demo.gif)
 
 ## Table of Contents
 
